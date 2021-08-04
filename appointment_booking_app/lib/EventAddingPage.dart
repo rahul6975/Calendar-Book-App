@@ -1,5 +1,4 @@
-import 'dart:html';
-
+import 'package:appointment_booking_app/Event.dart';
 import 'package:appointment_booking_app/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +14,7 @@ class EventAddingPage extends StatefulWidget {
 
 class _EventAddingPageState extends State<EventAddingPage> {
   final _formKey =
-  GlobalKey<FormState>(); // for getting atleast title for the appointment
+      GlobalKey<FormState>(); // for getting atleast title for the appointment
   late DateTime fromDate;
   late DateTime toDate;
   final titleController = TextEditingController();
@@ -45,7 +44,9 @@ class _EventAddingPageState extends State<EventAddingPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               _buildTitle(),
-              SizedBox(height: 12,)
+              SizedBox(
+                height: 12,
+              ),
               buildDateTime(),
             ],
           ),
@@ -57,8 +58,7 @@ class _EventAddingPageState extends State<EventAddingPage> {
 /*
 Save button
  */
-  List<Widget> buildEditingActions() =>
-      [
+  List<Widget> buildEditingActions() => [
         ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
                 primary: Colors.transparent, shadowColor: Colors.transparent),
@@ -67,77 +67,67 @@ Save button
             label: Text("Save")),
       ];
 
-  Widget _buildTitle() =>
-      TextFormField(
+  Widget _buildTitle() => TextFormField(
         style: TextStyle(fontSize: 24),
         decoration: InputDecoration(
             border: UnderlineInputBorder(), hintText: "Add appointment title"),
         onFieldSubmitted: (_) {},
         controller: titleController,
         validator: (title) =>
-        title != null && title.isEmpty ? "title cannot be empty" : null,
+            title != null && title.isEmpty ? "title cannot be empty" : null,
       );
 
-  Widget buildDateTime() =>
-      Column(
+  Widget buildDateTime() => Column(
         children: [
           buildFrom(),
         ],
       );
 
-  Widget buildDateTimePicker() =>
-      Column(
+  Widget buildDateTimePicker() => Column(
         children: [
           buildFrom(),
           buildTo(),
         ],
       );
 
-  Widget buildFrom() =>
-      buildHeader(
+  Widget buildFrom() => buildHeader(
         header: "From",
         child: Row(
           children: [
             Expanded(
               flex: 2,
               child: buildDropdownField(
-                text: Utils.toDate(fromDate), onClicked: () {
-                pickFromDateTime(pickDate: true);
-              },
-              ),
-            )
-            ,
-            Expanded
-              (child: buildDropdownField(
-                text:
-                Utils.toTime(fromDate),
+                text: Utils.toDate(fromDate),
                 onClicked: () {
-                  pickFromDateTime(pickDate: false);
-                }),
+                  pickFromDateTime(pickDate: true);
+                },
+              ),
+            ),
+            Expanded(
+              child: buildDropdownField(
+                  text: Utils.toTime(fromDate),
+                  onClicked: () {
+                    pickFromDateTime(pickDate: false);
+                  }),
             )
           ],
         ),
       );
 
-  Widget buildTo() =>
-      buildHeader(
+  Widget buildTo() => buildHeader(
         header: "To",
         child: Row(
           children: [
             Expanded(
               flex: 2,
               child: buildDropdownField(
-                text: Utils.toDate(toDate), onClicked: () {},
+                text: Utils.toDate(toDate),
+                onClicked: () {},
               ),
-            )
-            ,
-            Expanded
-              (child: buildDropdownField(
-                text:
-                Utils.toTime(toDate),
-                onClicked: () {
-
-                }),
+            ),
+            Expanded(
+              child: buildDropdownField(
+                  text: Utils.toTime(toDate), onClicked: () {}),
             )
           ],
         ),
@@ -153,28 +143,37 @@ Save button
     return '$time';
   }
 
-  Widget buildDropdownField({required String text,
-    required VoidCallback onClicked,}) =>
-      ListTile(title: Text(text),
+  Widget buildDropdownField({
+    required String text,
+    required VoidCallback onClicked,
+  }) =>
+      ListTile(
+        title: Text(text),
         trailing: Icon(Icons.arrow_drop_down),
-        onTap: onClicked,);
+        onTap: onClicked,
+      );
 
-  Widget buildHeader({
-    required String header,
-    required Widget child}) =>
-      Column(
+  Widget buildHeader({required String header, required Widget child}) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(header, style: TextStyle(fontWeight: FontWeight.bold),),
+          Text(
+            header,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           child,
         ],
       );
 
   Future pickFromDateTime({required bool pickDate}) async {
     final date = await pickDateTime(fromDate, pickDate: pickDate);
+    if (date == null) return;
+    setState(() {
+      fromDate = date;
+    });
   }
 
-  Future<DateTime?> pickDateTime(DateTime initialDate, {
+  Future<DateTime?> pickDateTime(
+    DateTime initialDate, {
     required bool pickDate,
     DateTime? firstDate,
   }) async {
@@ -188,14 +187,19 @@ Save button
 
       if (date == null) return null;
 
-      final time = Duration(
-          hours: initialDate.hour, minutes: initialDate.minute);
+      final time =
+          Duration(hours: initialDate.hour, minutes: initialDate.minute);
       return date.add(time);
     } else {
       final timeOfDay = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.fromDateTime(initialDate));
+          context: context, initialTime: TimeOfDay.fromDateTime(initialDate));
+
+      if (timeOfDay == null) return null;
+
+      final date =
+          DateTime(initialDate.year, initialDate.month, initialDate.day);
+      final time = Duration(hours: timeOfDay.hour, minutes: timeOfDay.minute);
+      return date.add(time);
     }
   }
-
 }
