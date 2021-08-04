@@ -1,6 +1,8 @@
 import 'dart:html';
 
+import 'package:appointment_booking_app/Utils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventAddingPage extends StatefulWidget {
   final Event? event;
@@ -76,9 +78,124 @@ Save button
         title != null && title.isEmpty ? "title cannot be empty" : null,
       );
 
- Widget buildDateTime() =>Column(
-   children: [
-     buildFrom(),
-   ],
- )
+  Widget buildDateTime() =>
+      Column(
+        children: [
+          buildFrom(),
+        ],
+      );
+
+  Widget buildDateTimePicker() =>
+      Column(
+        children: [
+          buildFrom(),
+          buildTo(),
+        ],
+      );
+
+  Widget buildFrom() =>
+      buildHeader(
+        header: "From",
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: buildDropdownField(
+                text: Utils.toDate(fromDate), onClicked: () {
+                pickFromDateTime(pickDate: true);
+              },
+              ),
+            )
+            ,
+            Expanded
+              (child: buildDropdownField(
+                text:
+                Utils.toTime(fromDate),
+                onClicked: () {
+                  pickFromDateTime(pickDate: false);
+                }),
+            )
+          ],
+        ),
+      );
+
+  Widget buildTo() =>
+      buildHeader(
+        header: "To",
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: buildDropdownField(
+                text: Utils.toDate(toDate), onClicked: () {},
+              ),
+            )
+            ,
+            Expanded
+              (child: buildDropdownField(
+                text:
+                Utils.toTime(toDate),
+                onClicked: () {
+
+                }),
+            )
+          ],
+        ),
+      );
+
+  static String toData(DateTime dateTime) {
+    final date = DateFormat.yMMMEd().format(dateTime);
+    return '$date';
+  }
+
+  static String toTime(DateTime dateTime) {
+    final time = DateFormat.Hm().format(dateTime);
+    return '$time';
+  }
+
+  Widget buildDropdownField({required String text,
+    required VoidCallback onClicked,}) =>
+      ListTile(title: Text(text),
+        trailing: Icon(Icons.arrow_drop_down),
+        onTap: onClicked,);
+
+  Widget buildHeader({
+    required String header,
+    required Widget child}) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(header, style: TextStyle(fontWeight: FontWeight.bold),),
+          child,
+        ],
+      );
+
+  Future pickFromDateTime({required bool pickDate}) async {
+    final date = await pickDateTime(fromDate, pickDate: pickDate);
+  }
+
+  Future<DateTime?> pickDateTime(DateTime initialDate, {
+    required bool pickDate,
+    DateTime? firstDate,
+  }) async {
+    if (pickDate) {
+      final date = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate ?? DateTime(2021, 8),
+        lastDate: DateTime(2101),
+      );
+
+      if (date == null) return null;
+
+      final time = Duration(
+          hours: initialDate.hour, minutes: initialDate.minute);
+      return date.add(time);
+    } else {
+      final timeOfDay = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(initialDate));
+    }
+  }
+
 }
