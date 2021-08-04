@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'CalendarWidget.dart';
+
 void main() {
-  runApp(MyApp());
+  runApp(
+    MaterialApp(
+      home: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -14,6 +20,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Appointment Booking"),
+      ),
+      body: CalendarWidget(),
+    );
   }
 }
