@@ -1,3 +1,4 @@
+import 'package:appointment_booking_app/EventAddingPage.dart';
 import 'package:flutter/material.dart';
 
 import 'CalendarWidget.dart';
@@ -25,6 +26,20 @@ class _MyAppState extends State<MyApp> {
         title: Text("Appointment Booking"),
       ),
       body: CalendarWidget(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        backgroundColor: Colors.red,
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EventAddingPage(),
+            ),
+          );
+        },
+      ),
     );
   }
 }
