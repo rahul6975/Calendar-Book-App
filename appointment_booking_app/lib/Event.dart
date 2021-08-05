@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+/*
+event model class
+ */
 class Event {
   final String name;
   final String email;

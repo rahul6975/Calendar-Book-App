@@ -1,6 +1,9 @@
 import 'package:appointment_booking_app/Event.dart';
 import 'package:flutter/cupertino.dart';
 
+/*
+Provider which stores the appointment details
+ */
 class EventProvider extends ChangeNotifier {
   final List<Event> _events = [];
 

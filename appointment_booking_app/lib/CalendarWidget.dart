@@ -9,11 +9,12 @@ import 'TasksWidget.dart';
 class CalendarWidget extends StatelessWidget {
   const CalendarWidget({Key? key}) : super(key: key);
 
+/*
+sets up the calendar
+ */
   @override
   Widget build(BuildContext context) {
-    final events = Provider
-        .of<EventProvider>(context)
-        .events;
+    final events = Provider.of<EventProvider>(context).events;
     return SfCalendar(
       dataSource: AppointmentsDataSource(events),
       view: CalendarView.month,
@@ -22,7 +23,10 @@ class CalendarWidget extends StatelessWidget {
       onLongPress: (details) {
         final provider = Provider.of<EventProvider>(context, listen: false);
         provider.setDate(details.date!);
-        showModalBottomSheet(context: context, builder: (context) => TasksWidget(),);
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => TasksWidget(),
+        );
       },
     );
   }
