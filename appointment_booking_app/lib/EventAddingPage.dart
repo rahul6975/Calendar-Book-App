@@ -1,6 +1,7 @@
 import 'package:appointment_booking_app/Event.dart';
 import 'package:appointment_booking_app/EventProvider.dart';
 import 'package:appointment_booking_app/Utils.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,8 @@ class _EventAddingPageState extends State<EventAddingPage> {
       GlobalKey<FormState>(); // for getting at-least name for the appointment
   late DateTime fromDate;
   late DateTime toDate;
+  bool validEmail = false;
+  var number = "";
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
@@ -71,7 +74,9 @@ Save button
             style: ElevatedButton.styleFrom(
                 primary: Colors.transparent, shadowColor: Colors.transparent),
             onPressed: () {
-              saveFrom();
+              if (validEmail && number.length == 10) {
+                saveFrom();
+              }
             },
             icon: Icon(Icons.done),
             label: Text("Save")),
@@ -92,9 +97,13 @@ Save button
         decoration: InputDecoration(
             border: UnderlineInputBorder(), hintText: "enter email"),
         onFieldSubmitted: (_) {},
+        onChanged: (value) {
+          validEmail = EmailValidator.validate(value);
+        },
         controller: emailController,
-        validator: (email) =>
-            email != null && email.isEmpty ? "email cannot be empty" : null,
+        validator: (email) => email != null && email.isEmpty && validEmail
+            ? "email cannot be empty"
+            : null,
       );
 
   Widget _buildMobile() => TextFormField(
@@ -102,9 +111,14 @@ Save button
         decoration: InputDecoration(
             border: UnderlineInputBorder(), hintText: "enter mobile number"),
         onFieldSubmitted: (_) {},
+        onChanged: (value) {
+          number = value.toString();
+        },
         controller: mobileController,
         validator: (mobile) =>
-            mobile != null && mobile.isEmpty ? "number cannot be empty" : null,
+            mobile != null && mobile.isEmpty && number.length == 10
+                ? "number cannot be empty"
+                : null,
       );
 
   Widget _buildComment() => TextFormField(
@@ -174,7 +188,7 @@ Save button
                   onClicked: () {
                     pickToDateTime(pickDate: false);
                   }),
-            )
+            ),
           ],
         ),
       );
