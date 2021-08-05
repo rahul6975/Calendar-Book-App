@@ -5,6 +5,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventAddingPage extends StatefulWidget {
   final Event? event;
@@ -35,6 +36,37 @@ class _EventAddingPageState extends State<EventAddingPage> {
       fromDate = DateTime.now();
       toDate = DateTime.now().add(Duration(hours: 1));
     }
+  }
+
+  /*
+  save data from shared preference
+   */
+
+  Future<void> saveData(Event event) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("name", event.name);
+    prefs.setString("mobile", event.mobile);
+    prefs.setString("email", event.email);
+    prefs.setString("from", event.from.toString());
+    prefs.setString("to", event.to.toString());
+    prefs.setString("comment", event.comment);
+  }
+
+  Future<Event> getDataFromDB() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString("name");
+    final email = prefs.getString("email");
+    final from = prefs.getString("from");
+    final to = prefs.getString("to");
+    final mobile = prefs.getString("mobile");
+    final comment = prefs.getString("comment");
+    return Event(
+        name: name!,
+        email: email!,
+        mobile: mobile!,
+        comment: comment!,
+        from: DateTime.parse(from!),
+        to: DateTime.parse(to!));
   }
 
   @override
@@ -74,14 +106,25 @@ Save button
             style: ElevatedButton.styleFrom(
                 primary: Colors.transparent, shadowColor: Colors.transparent),
             onPressed: () {
+              /*
+              check if mobile and email are valid or  not
+              if not then show a snakeBar
+               */
               if (validEmail && number.length == 10) {
                 saveFrom();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Invalid inputs"),
+                ));
               }
             },
             icon: Icon(Icons.done),
             label: Text("Save")),
       ];
 
+  /*
+  builds the name TextField
+   */
   Widget _buildTitle() => TextFormField(
         style: TextStyle(fontSize: 24),
         decoration: InputDecoration(
@@ -92,6 +135,9 @@ Save button
             name != null && name.isEmpty ? "name cannot be empty" : null,
       );
 
+  /*
+  builds the email TextField
+   */
   Widget _buildEmail() => TextFormField(
         style: TextStyle(fontSize: 24),
         decoration: InputDecoration(
@@ -106,6 +152,9 @@ Save button
             : null,
       );
 
+  /*
+  builds the mobile TextField
+   */
   Widget _buildMobile() => TextFormField(
         style: TextStyle(fontSize: 24),
         decoration: InputDecoration(
@@ -121,6 +170,9 @@ Save button
                 : null,
       );
 
+  /*
+  builds the comment TextField
+   */
   Widget _buildComment() => TextFormField(
         style: TextStyle(fontSize: 24),
         decoration: InputDecoration(
@@ -132,12 +184,18 @@ Save button
             : null,
       );
 
+  /*
+  builds the fromDate Column
+   */
   Widget buildDateTime() => Column(
         children: [
           buildFrom(),
         ],
       );
 
+  /*
+  builds the datePicker Column
+   */
   Widget buildDateTimePicker() => Column(
         children: [
           buildFrom(),
@@ -145,6 +203,9 @@ Save button
         ],
       );
 
+  /*
+  builds the fromDate header
+   */
   Widget buildFrom() => buildHeader(
         header: "From",
         child: Row(
@@ -169,6 +230,9 @@ Save button
         ),
       );
 
+  /*
+  builds the toDate header
+   */
   Widget buildTo() => buildHeader(
         header: "To",
         child: Row(
@@ -186,7 +250,7 @@ Save button
               child: buildDropdownField(
                   text: Utils.toTime(toDate),
                   onClicked: () {
-                    pickToDateTime(pickDate: false);
+                    // pickToDateTime(pickDate: false);
                   }),
             ),
           ],
@@ -234,10 +298,12 @@ Save button
           mobile: mobileController.text,
           comment: commentController.text,
           from: fromDate,
-          to: toDate);
+          to: DateTime(fromDate.year, fromDate.month, fromDate.day,
+              fromDate.hour + 1, fromDate.minute));
 
       final provider = Provider.of<EventProvider>(context, listen: false);
       provider.addAppointment(event);
+      saveData(event);
       Navigator.of(context).pop();
     }
   }
@@ -254,11 +320,19 @@ Save button
   Future pickFromDateTime({required bool pickDate}) async {
     final date = await pickDateTime(fromDate, pickDate: pickDate);
     if (date == null) return;
-
+    if (date.weekday == DateTime.tuesday ||
+        date.weekday == DateTime.wednesday) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Tuesday and Wednesday are holidays"),
+      ));
+      return null;
+    }
     if (date.isAfter(toDate)) {
       toDate = DateTime(date.year, date.month, date.day);
     }
     setState(() {
+      final datee = DateTime(toDate.year, toDate.month, toDate.day,
+          toDate.hour + 1, toDate.minute);
       fromDate = date;
     });
   }
@@ -287,6 +361,12 @@ Save button
 
       if (timeOfDay == null) return null;
 
+      if (timeOfDay.hour < 9 || timeOfDay.hour > 17) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Working Hours are from 9am to 5pm"),
+        ));
+        return null;
+      }
       final date =
           DateTime(initialDate.year, initialDate.month, initialDate.day);
       final time = Duration(hours: timeOfDay.hour, minutes: timeOfDay.minute);

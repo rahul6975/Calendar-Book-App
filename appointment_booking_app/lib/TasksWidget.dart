@@ -1,6 +1,9 @@
+import 'package:appointment_booking_app/AppointmentDetails.dart';
 import 'package:appointment_booking_app/AppointmentsDataSource.dart';
+import 'package:appointment_booking_app/Event.dart';
 import 'package:appointment_booking_app/EventProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:provider/provider.dart';
@@ -13,12 +16,32 @@ class TasksWidget extends StatefulWidget {
 }
 
 class _TasksWidgetState extends State<TasksWidget> {
+  /*
+  get data from shared preference
+   */
+  Future<Event> getDataFromDB() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString("name");
+    final email = prefs.getString("email");
+    final from = prefs.getString("from");
+    final to = prefs.getString("to");
+    final mobile = prefs.getString("mobile");
+    final comment = prefs.getString("comment");
+    return Event(
+        name: name!,
+        email: email!,
+        mobile: mobile!,
+        comment: comment!,
+        from: DateTime.parse(from!),
+        to: DateTime.parse(to!));
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<EventProvider>(context);
     final selectedAppointment = provider.appointmentsOfSelectedDate;
-
-    if (selectedAppointment.isEmpty) {
+    final event = getDataFromDB();
+    if (selectedAppointment.isEmpty && event != null) {
       return Center(
         child: Text(
           "No Appointments found",
@@ -43,9 +66,9 @@ class _TasksWidgetState extends State<TasksWidget> {
           if (details.appointments == null) return;
           final event = details.appointments!.first;
 
-          // Navigator.of(context).push(MaterialPageRoute(
-          //   builder: (context) => AppointmentViewPage(event: event),
-          // ));
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => AppointmentDetails(event: event),
+          ));
         },
       ),
     );
@@ -68,7 +91,7 @@ class _TasksWidgetState extends State<TasksWidget> {
         child: Text(
           event.comment,
           maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+          overflow: TextOverflow.visible,
           style: TextStyle(
             color: Colors.black,
             fontSize: 16,
