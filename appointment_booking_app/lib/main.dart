@@ -1,12 +1,16 @@
 import 'package:appointment_booking_app/EventAddingPage.dart';
+import 'package:appointment_booking_app/EventProvider.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import 'CalendarWidget.dart';
 
 void main() {
   runApp(
-    MaterialApp(
-      home: MyApp(),
+    ChangeNotifierProvider(
+      create: (context) => EventProvider(),
+      child: MaterialApp(
+        home: MyApp(),
+      ),
     ),
   );
 }
