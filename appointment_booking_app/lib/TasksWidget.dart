@@ -34,6 +34,19 @@ class _TasksWidgetState extends State<TasksWidget> {
         dataSource: AppointmentsDataSource(provider.events),
         initialDisplayDate: provider.selectedDate,
         appointmentBuilder: appointmentBuilder,
+        headerHeight: 0,
+        todayHighlightColor: Colors.black,
+        selectionDecoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.3),
+        ),
+        onTap: (details) {
+          if (details.appointments == null) return;
+          final event = details.appointments!.first;
+
+          // Navigator.of(context).push(MaterialPageRoute(
+          //   builder: (context) => AppointmentViewPage(event: event),
+          // ));
+        },
       ),
     );
   }
@@ -47,6 +60,10 @@ class _TasksWidgetState extends State<TasksWidget> {
     return Container(
       width: details.bounds.width,
       height: details.bounds.height,
+      decoration: BoxDecoration(
+        color: event.backgroundColor.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Center(
         child: Text(
           event.comment,

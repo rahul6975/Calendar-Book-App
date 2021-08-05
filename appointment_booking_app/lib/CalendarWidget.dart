@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'AppointmentsDataSource.dart';
+import 'TasksWidget.dart';
 
 class CalendarWidget extends StatelessWidget {
   const CalendarWidget({Key? key}) : super(key: key);
