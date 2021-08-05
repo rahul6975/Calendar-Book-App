@@ -1,7 +1,9 @@
 import 'package:appointment_booking_app/Event.dart';
+import 'package:appointment_booking_app/EventProvider.dart';
 import 'package:appointment_booking_app/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class EventAddingPage extends StatefulWidget {
   final Event? event;
@@ -14,10 +16,13 @@ class EventAddingPage extends StatefulWidget {
 
 class _EventAddingPageState extends State<EventAddingPage> {
   final _formKey =
-      GlobalKey<FormState>(); // for getting atleast title for the appointment
+      GlobalKey<FormState>(); // for getting at-least name for the appointment
   late DateTime fromDate;
   late DateTime toDate;
-  final titleController = TextEditingController();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final mobileController = TextEditingController();
+  final commentController = TextEditingController();
 
   @override
   void initState() {
@@ -44,10 +49,13 @@ class _EventAddingPageState extends State<EventAddingPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               _buildTitle(),
+              _buildEmail(),
+              _buildMobile(),
+              _buildComment(),
               SizedBox(
                 height: 12,
               ),
-              buildDateTime(),
+              buildDateTimePicker(),
             ],
           ),
         ),
@@ -62,7 +70,9 @@ Save button
         ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
                 primary: Colors.transparent, shadowColor: Colors.transparent),
-            onPressed: () {},
+            onPressed: () {
+              saveFrom();
+            },
             icon: Icon(Icons.done),
             label: Text("Save")),
       ];
@@ -70,11 +80,42 @@ Save button
   Widget _buildTitle() => TextFormField(
         style: TextStyle(fontSize: 24),
         decoration: InputDecoration(
-            border: UnderlineInputBorder(), hintText: "Add appointment title"),
+            border: UnderlineInputBorder(), hintText: "enter name"),
         onFieldSubmitted: (_) {},
-        controller: titleController,
-        validator: (title) =>
-            title != null && title.isEmpty ? "title cannot be empty" : null,
+        controller: nameController,
+        validator: (name) =>
+            name != null && name.isEmpty ? "name cannot be empty" : null,
+      );
+
+  Widget _buildEmail() => TextFormField(
+        style: TextStyle(fontSize: 24),
+        decoration: InputDecoration(
+            border: UnderlineInputBorder(), hintText: "enter email"),
+        onFieldSubmitted: (_) {},
+        controller: emailController,
+        validator: (email) =>
+            email != null && email.isEmpty ? "email cannot be empty" : null,
+      );
+
+  Widget _buildMobile() => TextFormField(
+        style: TextStyle(fontSize: 24),
+        decoration: InputDecoration(
+            border: UnderlineInputBorder(), hintText: "enter mobile number"),
+        onFieldSubmitted: (_) {},
+        controller: mobileController,
+        validator: (mobile) =>
+            mobile != null && mobile.isEmpty ? "number cannot be empty" : null,
+      );
+
+  Widget _buildComment() => TextFormField(
+        style: TextStyle(fontSize: 24),
+        decoration: InputDecoration(
+            border: UnderlineInputBorder(), hintText: "enter some comments"),
+        onFieldSubmitted: (_) {},
+        controller: commentController,
+        validator: (comment) => comment != null && comment.isEmpty
+            ? "comments cannot be empty"
+            : null,
       );
 
   Widget buildDateTime() => Column(
@@ -122,12 +163,17 @@ Save button
               flex: 2,
               child: buildDropdownField(
                 text: Utils.toDate(toDate),
-                onClicked: () {},
+                onClicked: () {
+                  pickToDateTime(pickDate: true);
+                },
               ),
             ),
             Expanded(
               child: buildDropdownField(
-                  text: Utils.toTime(toDate), onClicked: () {}),
+                  text: Utils.toTime(toDate),
+                  onClicked: () {
+                    pickToDateTime(pickDate: false);
+                  }),
             )
           ],
         ),
@@ -164,9 +210,40 @@ Save button
         ],
       );
 
+  Future saveFrom() async {
+    final isValid = _formKey.currentState!.validate();
+
+    if (isValid) {
+      final event = Event(
+          name: nameController.text,
+          email: emailController.text,
+          mobile: mobileController.text,
+          comment: commentController.text,
+          from: fromDate,
+          to: toDate);
+
+      final provider = Provider.of<EventProvider>(context, listen: false);
+      provider.addAppointment(event);
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future pickToDateTime({required bool pickDate}) async {
+    final date = await pickDateTime(toDate,
+        pickDate: pickDate, firstDate: pickDate ? fromDate : null);
+    if (date == null) return;
+    setState(() {
+      toDate = date;
+    });
+  }
+
   Future pickFromDateTime({required bool pickDate}) async {
     final date = await pickDateTime(fromDate, pickDate: pickDate);
     if (date == null) return;
+
+    if (date.isAfter(toDate)) {
+      toDate = DateTime(date.year, date.month, date.day);
+    }
     setState(() {
       fromDate = date;
     });
