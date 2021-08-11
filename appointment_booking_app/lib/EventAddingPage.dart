@@ -103,23 +103,24 @@ Save button
  */
   List<Widget> buildEditingActions() => [
         ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.transparent, shadowColor: Colors.transparent),
-            onPressed: () {
-              /*
+          style: ElevatedButton.styleFrom(
+              primary: Colors.transparent, shadowColor: Colors.transparent),
+          onPressed: () {
+            /*
               check if mobile and email are valid or  not
               if not then show a snakeBar
                */
-              if (validEmail && number.length == 10) {
-                saveFrom();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Invalid inputs"),
-                ));
-              }
-            },
-            icon: Icon(Icons.done),
-            label: Text("Save")),
+            if (validEmail && number.length == 10) {
+              saveFrom();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("Invalid inputs"),
+              ));
+            }
+          },
+          icon: Icon(Icons.done),
+          label: Text("Save"),
+        ),
       ];
 
   /*
@@ -322,9 +323,19 @@ Save button
     if (date == null) return;
     if (date.weekday == DateTime.tuesday ||
         date.weekday == DateTime.wednesday) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Tuesday and Wednesday are holidays"),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Tuesday and Wednesday are holidays"),
+        ),
+      );
+      return null;
+    }
+    if (date.day < DateTime.now().day) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("You cannot book appointment for previous days"),
+        ),
+      );
       return null;
     }
     if (date.isAfter(toDate)) {
@@ -362,9 +373,11 @@ Save button
       if (timeOfDay == null) return null;
 
       if (timeOfDay.hour < 9 || timeOfDay.hour > 17) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Working Hours are from 9am to 5pm"),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Working Hours are from 9am to 5pm"),
+          ),
+        );
         return null;
       }
       final date =
