@@ -199,8 +199,8 @@ Save button
    */
   Widget buildDateTimePicker() => Column(
         children: [
-          buildFrom(),
-          buildTo(),
+          Container(margin: EdgeInsets.only(top: 30), child: buildFrom()),
+          // buildTo(),
         ],
       );
 
@@ -305,6 +305,11 @@ Save button
       final provider = Provider.of<EventProvider>(context, listen: false);
       provider.addAppointment(event);
       saveData(event);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Appointment booked successfully"),
+        ),
+      );
       Navigator.of(context).pop();
     }
   }
@@ -342,8 +347,6 @@ Save button
       toDate = DateTime(date.year, date.month, date.day);
     }
     setState(() {
-      final datee = DateTime(toDate.year, toDate.month, toDate.day,
-          toDate.hour + 1, toDate.minute);
       fromDate = date;
     });
   }
@@ -362,17 +365,18 @@ Save button
       );
 
       if (date == null) return null;
-
       final time =
           Duration(hours: initialDate.hour, minutes: initialDate.minute);
       return date.add(time);
     } else {
       final timeOfDay = await showTimePicker(
-          context: context, initialTime: TimeOfDay.fromDateTime(initialDate));
-
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initialDate),
+      );
       if (timeOfDay == null) return null;
 
-      if (timeOfDay.hour < 9 || timeOfDay.hour > 17) {
+      if (timeOfDay.hour < 9 ||
+          (timeOfDay.hour >= 16 && timeOfDay.minute > 0)) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Working Hours are from 9am to 5pm"),
@@ -383,6 +387,14 @@ Save button
       final date =
           DateTime(initialDate.year, initialDate.month, initialDate.day);
       final time = Duration(hours: timeOfDay.hour, minutes: timeOfDay.minute);
+      if (date.hour > DateTime.now().hour) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("You cannot but appointment for already passed time"),
+          ),
+        );
+        return null;
+      }
       return date.add(time);
     }
   }

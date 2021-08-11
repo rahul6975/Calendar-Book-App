@@ -9,6 +9,10 @@ void main() {
     ChangeNotifierProvider(
       create: (context) => EventProvider(),
       child: MaterialApp(
+        themeMode: ThemeMode.dark,
+        darkTheme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: Colors.black,
+        ),
         home: MyApp(),
       ),
     ),
