@@ -249,10 +249,11 @@ Save button
             ),
             Expanded(
               child: buildDropdownField(
-                  text: Utils.toTime(toDate),
-                  onClicked: () {
-                    // pickToDateTime(pickDate: false);
-                  }),
+                text: Utils.toTime(toDate),
+                onClicked: () {
+                  // pickToDateTime(pickDate: false);
+                },
+              ),
             ),
           ],
         ),
@@ -308,6 +309,7 @@ Save button
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Appointment booked successfully"),
+          backgroundColor: Colors.green,
         ),
       );
       Navigator.of(context).pop();
@@ -331,6 +333,7 @@ Save button
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Tuesday and Wednesday are holidays"),
+          backgroundColor: Colors.red,
         ),
       );
       return null;
@@ -339,6 +342,7 @@ Save button
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("You cannot book appointment for previous days"),
+          backgroundColor: Colors.red,
         ),
       );
       return null;
@@ -380,22 +384,51 @@ Save button
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Working Hours are from 9am to 5pm"),
+            backgroundColor: Colors.red,
           ),
         );
+        // showErrorSnackBar(context);
+
         return null;
       }
       final date =
           DateTime(initialDate.year, initialDate.month, initialDate.day);
       final time = Duration(hours: timeOfDay.hour, minutes: timeOfDay.minute);
-      if (date.hour > DateTime.now().hour) {
+      if (timeOfDay.hour <= DateTime.now().hour && timeOfDay.minute <= DateTime.now().minute && date.day <= DateTime.now().day) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("You cannot but appointment for already passed time"),
+            backgroundColor: Colors.red,
           ),
         );
         return null;
       }
       return date.add(time);
     }
+  }
+
+  void showErrorSnackBar(BuildContext context) {
+    final snackBar = SnackBar(
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, size: 32),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              'Working Hours are from 9am to 5pm',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 3),
+      behavior: SnackBarBehavior.fixed,
+    );
+
+    Scaffold.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
   }
 }
