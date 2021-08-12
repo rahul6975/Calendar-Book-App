@@ -21,13 +21,13 @@ class AppointmentDetails extends StatelessWidget {
                 Expanded(
                   child: Text(
                     "Name :",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     event.name,
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ],
@@ -40,13 +40,13 @@ class AppointmentDetails extends StatelessWidget {
                 Expanded(
                   child: Text(
                     "mobile :",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     event.mobile,
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ],
@@ -59,13 +59,13 @@ class AppointmentDetails extends StatelessWidget {
                 Expanded(
                   child: Text(
                     "Email :",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     event.email,
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ],
@@ -78,13 +78,13 @@ class AppointmentDetails extends StatelessWidget {
                 Expanded(
                   child: Text(
                     "From :",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     event.from.toString(),
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ],
@@ -97,13 +97,13 @@ class AppointmentDetails extends StatelessWidget {
                 Expanded(
                   child: Text(
                     "To :",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     event.to.toString(),
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ],
@@ -116,13 +116,13 @@ class AppointmentDetails extends StatelessWidget {
                 Expanded(
                   child: Text(
                     "Topic :",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     event.comment,
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ],
