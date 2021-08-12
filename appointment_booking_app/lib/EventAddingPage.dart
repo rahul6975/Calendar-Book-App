@@ -387,14 +387,14 @@ Save button
             backgroundColor: Colors.red,
           ),
         );
-        // showErrorSnackBar(context);
 
         return null;
       }
       final date =
           DateTime(initialDate.year, initialDate.month, initialDate.day);
       final time = Duration(hours: timeOfDay.hour, minutes: timeOfDay.minute);
-      if (timeOfDay.hour <= DateTime.now().hour && timeOfDay.minute <= DateTime.now().minute && date.day <= DateTime.now().day) {
+      if (timeOfDay.hour <= DateTime.now().hour &&
+          date.day <= DateTime.now().day) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("You cannot but appointment for already passed time"),
@@ -426,7 +426,6 @@ Save button
       duration: Duration(seconds: 3),
       behavior: SnackBarBehavior.fixed,
     );
-
     Scaffold.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
