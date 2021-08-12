@@ -40,4 +40,4 @@ Flutter based appointment booking app which allows you to book appointments
 </br>
 
 ## Video
-[here](https://drive.google.com/file/d/1LXAHNd5vlaiuoTWLWxQ5pDXOr2Hf61vS/view?usp=drivesdk)
+[here](https://drive.google.com/file/d/1MECEmmS0MLV5z1ZNnDPV_MVr79uUz0Io/view?usp=drivesdk)
